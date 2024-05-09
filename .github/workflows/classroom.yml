@@ -1,0 +1,292 @@
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: p1CreateOneV1
+      id: p1createonev1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateOneV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          end
+        expected-output: "((Process 0.*:.*child.* 1[\\s]*)|(Process 1:.*parent is
+          0 and ((has no children)|(child.*empty))[\\s]*)){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 3
+    - name: p1CreateOneV2
+      id: p1createonev2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateOneV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          end
+        expected-output: "(((Process 0.*:.*child.*1[\\s]*)|(Process 1:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){2}[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 2
+    - name: p1CreateSimpleV1
+      id: p1createsimplev1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateSimpleV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 1
+          end
+        expected-output: "((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and child.*((is)|(are))[\\s]*3[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          3.*:.*parent is[\\s]*1[\\s]*and ((has no children)|(child.*empty))[\\s]*)){4}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 3
+    - name: p1CreateSimpleV2
+      id: p1createsimplev2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateSimpleV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 1
+          end
+        expected-output: "(((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and child.*((is)|(are))[\\s]*3[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          3.*:.*parent is[\\s]*1[\\s]*and ((has no children)|(child.*empty))[\\s]*)){4}[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 2
+    - name: p1CreateComplexV1
+      id: p1createcomplexv1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateComplexV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 2
+          create 0
+          create 2
+          create 5
+          end
+        expected-output: "((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*4[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and children are[\\s]*3[\\s]*5[\\s]*)|(Process
+          3.*:.*parent is[\\s]*2[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          4.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          5.*:.*parent is[\\s]*2[\\s]*and child.*((is)|(are))[\\s]*6[\\s]*)|(Process
+          6.*:.*parent is[\\s]*5[\\s]*and ((has no children)|(child.*empty))[\\s]*)){7}"
+        comparison-method: regex
+        timeout: 3
+        max-score: 3
+    - name: p1CreateComplexV2
+      id: p1createcomplexv2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1CreateComplexV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 2
+          create 0
+          create 2
+          create 5
+          end
+        expected-output: "(((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*4[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and children are[\\s]*3[\\s]*5[\\s]*)|(Process
+          3.*:.*parent is[\\s]*2[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          4.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          5.*:.*parent is[\\s]*2[\\s]*and child.*((is)|(are))[\\s]*6[\\s]*)|(Process
+          6.*:.*parent is[\\s]*5[\\s]*and ((has no children)|(child.*empty))[\\s]*)){7}[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 3
+        max-score: 2
+    - name: p1DestroyNoChildV1
+      id: p1destroynochildv1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyNoChildV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          destroy 1
+          end
+        expected-output: "((Process 0.*:.*child.*1[\\s]*)|(Process 1:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){2}[\\S\\s]*(Process 0.*:.*((has
+          no children)|(child.*empty)))"
+        comparison-method: regex
+        timeout: 2
+        max-score: 3
+    - name: p1DestroyNoChildV2
+      id: p1destroynochildv2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyNoChildV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          destroy 1
+          end
+        expected-output: "(((Process 0.*:.*child.*1[\\s]*)|(Process 1:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){2}[\\S\\s]*(Process 0.*:.*((has
+          no children)|(child.*empty)))[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 2
+    - name: p1DestroyOneChildV1
+      id: p1destroyonechildv1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyOneChildV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 1
+          destroy 1
+          destroy 2
+          end
+        expected-output: "((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and child.*((is)|(are))[\\s]*3[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          3.*:.*parent is[\\s]*1[\\s]*and ((has no children)|(child.*empty))[\\s]*)){4}[\\S\\s]*((Process
+          0.*:.*child.*((is)|(are))[\\s]*2[\\s]*)|(Process 2.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 3
+    - name: p1DestroyOneChildV2
+      id: p1destroyonechildv2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyOneChildV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 1
+          destroy 1
+          destroy 2
+          end
+        expected-output: "(((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and child.*((is)|(are))[\\s]*3[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          3.*:.*parent is[\\s]*1[\\s]*and ((has no children)|(child.*empty))[\\s]*)){4}[\\S\\s]*((Process
+          0.*:.*child.*((is)|(are))[\\s]*2[\\s]*)|(Process 2.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){2}[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 2
+        max-score: 2
+    - name: p1DestroyHierarchyV1
+      id: p1destroyhierarchyv1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyHierarchyV1
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 2
+          create 0
+          create 2
+          create 5
+          destroy 2
+          destroy 4
+          destroy 1
+          end
+        expected-output: "((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*4[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and children are[\\s]*3[\\s]*5[\\s]*)|(Process
+          3.*:.*parent is[\\s]*2[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          4.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          5.*:.*parent is[\\s]*2[\\s]*and child.*((is)|(are))[\\s]*6[\\s]*)|(Process
+          6.*:.*parent is[\\s]*5[\\s]*and ((has no children)|(child.*empty))[\\s]*)){7}[\\S\\s]*((Process
+          0.*:.*children are[\\s]*1[\\s]*4[\\s]*)|(Process 1.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)|(Process 4.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){3}"
+        comparison-method: regex
+        timeout: 3
+        max-score: 3
+    - name: p1DestroyHierarchyV2
+      id: p1destroyhierarchyv2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: p1DestroyHierarchyV2
+        setup-command: ''
+        command: gradle run
+        input: |
+          create 0
+          create 0
+          create 2
+          create 0
+          create 2
+          create 5
+          destroy 2
+          destroy 4
+          destroy 1
+          end
+        expected-output: "(((Process 0.*:.*children are[\\s]*1[\\s]*2[\\s]*4[\\s]*)|(Process
+          1.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          2.*:.*parent is[\\s]*0[\\s]*and children are[\\s]*3[\\s]*5[\\s]*)|(Process
+          3.*:.*parent is[\\s]*2[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          4.*:.*parent is[\\s]*0[\\s]*and ((has no children)|(child.*empty))[\\s]*)|(Process
+          5.*:.*parent is[\\s]*2[\\s]*and child.*((is)|(are))[\\s]*6[\\s]*)|(Process
+          6.*:.*parent is[\\s]*5[\\s]*and ((has no children)|(child.*empty))[\\s]*)){7}[\\S\\s]*((Process
+          0.*:.*children are[\\s]*1[\\s]*4[\\s]*)|(Process 1.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)|(Process 4.*:.*parent is[\\s]*0[\\s]*and
+          ((has no children)|(child.*empty))[\\s]*)){3}[\\S\\s]*){2}"
+        comparison-method: regex
+        timeout: 3
+        max-score: 2
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        P1CREATEONEV1_RESULTS: "${{steps.p1createonev1.outputs.result}}"
+        P1CREATEONEV2_RESULTS: "${{steps.p1createonev2.outputs.result}}"
+        P1CREATESIMPLEV1_RESULTS: "${{steps.p1createsimplev1.outputs.result}}"
+        P1CREATESIMPLEV2_RESULTS: "${{steps.p1createsimplev2.outputs.result}}"
+        P1CREATECOMPLEXV1_RESULTS: "${{steps.p1createcomplexv1.outputs.result}}"
+        P1CREATECOMPLEXV2_RESULTS: "${{steps.p1createcomplexv2.outputs.result}}"
+        P1DESTROYNOCHILDV1_RESULTS: "${{steps.p1destroynochildv1.outputs.result}}"
+        P1DESTROYNOCHILDV2_RESULTS: "${{steps.p1destroynochildv2.outputs.result}}"
+        P1DESTROYONECHILDV1_RESULTS: "${{steps.p1destroyonechildv1.outputs.result}}"
+        P1DESTROYONECHILDV2_RESULTS: "${{steps.p1destroyonechildv2.outputs.result}}"
+        P1DESTROYHIERARCHYV1_RESULTS: "${{steps.p1destroyhierarchyv1.outputs.result}}"
+        P1DESTROYHIERARCHYV2_RESULTS: "${{steps.p1destroyhierarchyv2.outputs.result}}"
+      with:
+        runners: p1createonev1,p1createonev2,p1createsimplev1,p1createsimplev2,p1createcomplexv1,p1createcomplexv2,p1destroynochildv1,p1destroynochildv2,p1destroyonechildv1,p1destroyonechildv2,p1destroyhierarchyv1,p1destroyhierarchyv2
