@@ -1,63 +1,116 @@
 /* COMPSCI 424 Program 1
- * Name:
- * 
- * This is a template. Program1.java *must* contain the main class
- * for this program. Otherwise, feel free to edit these files, even
- * these pre-written comments or my provided code. You can add any
- * classes, methods, and data structures that you need to solve the
- * problem and display your solution in the correct format.
+ * Name: Jack Lemm
  */
 package compsci424.p1.java;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 /**
- * Main class for this program. The required steps have been copied
- * into the main method as comments. Feel free to add more comments to
- * help you understand your code, or for any other reason. Also feel
- * free to edit this comment to be more helpful for you.
+ * Main class for this program.
  */
 public class Program1 {
-    // Declare any class/instance variables that you need here.
-
-    /**
-     * @param args command-line arguments, which can be ignored
-     */
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> actions = new ArrayList<>();
 
-        // 1. Ask the user to enter commands of the form "create N",
-        //    "destroy N", or "end", where N is an integer between 0 
-        //    and 15.
+        // accept commands until "end" is entered
+        while (true) {
+            String command = scanner.nextLine().trim();
+            if (command.equals("end")) {
+                break;
+            }
+            actions.add(command);
+        }
 
-        // 2. While the user has not typed "end", continue accepting
-        //    commands. Add each command to a list of actions to take 
-        //    while you run the simulation.
-        // 3. When the user types "end" (or optionally any word that 
-        //    is not "create" or "destroy"), stop accepting commands 
-        //    and complete the following steps.
-        //
-        // Hint: Steps 2 and 3 refer to the same loop. ;-)
+        // create Version1 and Version2 objects
+        Version1 version1 = new Version1(16);
+        Version2 version2 = new Version2(16);
 
-        // 4. Create an object of the Version 1 class and an object of
-        //    the Version 2 class.
+        // run the command sequence with Version1
+        System.out.println("Version 1:");
+        for (String action : actions) {
+            String[] parts = action.split(" ");
+            String command = parts[0];
+            int pid = Integer.parseInt(parts[1]);
 
-        // 5. Run the command sequence once with the Version 1 object, 
-        //    calling its showProcessTree method after each command to
-        //    show the changes in the tree after each command.
+            switch (command) {
+                case "create":
+                    version1.create(pid);
+                    break;
+                case "destroy":
+                    version1.destroy(pid);
+                    break;
+            }
+            version1.showProcessInfo();
+            System.out.println();
+        }
 
-        // 6. Repeat step 5, but with the Version 2 object.
+        // run the command sequence with Version2
+        System.out.println("\nVersion 2:");
+        for (String action : actions) {
+            String[] parts = action.split(" ");
+            String command = parts[0];
+            int pid = Integer.parseInt(parts[1]);
 
-        // 7. Store the current system time in a variable
+            switch (command) {
+                case "create":
+                    version2.create(pid);
+                    break;
+                case "destroy":
+                    version2.destroy(pid);
+                    break;
+            }
+            version2.showProcessInfo();
+            System.out.println();
+        }
 
-        // ... then run the command sequence 200 times with Version 1.
+        // measure execution time for Version1
+        long startTimeV1 = System.nanoTime();
+        for (int i = 0; i < 200; i++) {
+            for (String action : actions) {
+                String[] parts = action.split(" ");
+                String command = parts[0];
+                int pid = Integer.parseInt(parts[1]);
 
-        // ... After this, store the new current system time in a
-        //     second variable. Subtract the start time from the end 
-        //     time to get the Version 1 running time, then display 
-        //     the Version 1 running time.
+                switch (command) {
+                    case "create":
+                        version1.create(pid);
+                        break;
+                    case "destroy":
+                        version1.destroy(pid);
+                        break;
+                }
+            }
+        }
+        long endTimeV1 = System.nanoTime();
+        long runningTimeV1 = (endTimeV1 - startTimeV1) / 1_000_000; // Convert to milliseconds
 
-        // 8. Repeat step 7, but with the Version 2 object.
+        // measure execution time for Version2
+        long startTimeV2 = System.nanoTime();
+        for (int i = 0; i < 200; i++) {
+            for (String action : actions) {
+                String[] parts = action.split(" ");
+                String command = parts[0];
+                int pid = Integer.parseInt(parts[1]);
 
-        // This line is here just to test the Gradle build procedure.
-        // You can delete it.
-        System.out.println("Builds without errors and runs to completion.");
+                switch (command) {
+                    case "create":
+                        version2.create(pid);
+                        break;
+                    case "destroy":
+                        version2.destroy(pid);
+                        break;
+                }
+            }
+        }
+        long endTimeV2 = System.nanoTime();
+        long runningTimeV2 = (endTimeV2 - startTimeV2) / 1_000_000; // convert to milliseconds
+
+        // Display running times
+        System.out.println("\nVersion 1 running time: " + runningTimeV1 + " milliseconds");
+        System.out.println("Version 2 running time: " + runningTimeV2 + " milliseconds");
+
+        scanner.close();
     }
 }
